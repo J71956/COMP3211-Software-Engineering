@@ -79,15 +79,23 @@
     - Write unit tests for terrain detection and validation
     - _Requirements: 11.2, 12.4_
 
-- [ ] 4. Implement Player class and game state management
-  - [ ] 4.1 Create Player class with piece ownership tracking
+- [x] 4. Implement Player class and game state management
+
+
+
+
+  - [x] 4.1 Create Player class with piece ownership tracking
+
+
     - Implement Player class with name, color, and piece collection
     - Add methods for piece management and active piece queries
     - Create player-specific den and trap identification
     - Write unit tests for Player class functionality
     - _Requirements: 3.3, 5.3_
 
-  - [ ] 4.2 Implement GameState class for undo functionality
+
+  - [x] 4.2 Implement GameState class for undo functionality
+
     - Create immutable GameState class for state snapshots
     - Implement state capture and restoration methods
     - Add state comparison and validation logic
@@ -95,35 +103,67 @@
     - _Requirements: 6.1, 6.4_
 
 - [ ] 5. Create core Game class with rule enforcement
-  - [ ] 5.1 Implement basic Game class with initialization and turn management
+
+
+
+
+  - [x] 5.1 Implement basic Game class with initialization and turn management
+
+
     - Create Game class with board, players, and current player tracking
     - Implement game initialization with proper piece placement
     - Add turn switching and current player management
     - Write unit tests for game initialization and turn management
     - _Requirements: 1.1, 1.2, 1.3, 5.3_
 
-  - [ ] 5.2 Implement move validation and execution logic
+
+
+  - [x] 5.2 Implement move validation and execution logic
+
+
+
+
+
     - Add make_move method with comprehensive validation
     - Implement piece movement with capture handling
     - Add move history tracking for each executed move
     - Write unit tests for move validation and execution
+
+
     - _Requirements: 11.1, 11.2, 12.1_
 
-  - [ ] 5.3 Add victory condition detection and game ending logic
+  - [x] 5.3 Add victory condition detection and game ending logic
+
+
+
+
+
     - Implement den-reaching victory condition detection
     - Add all-pieces-captured victory condition checking
+
+
     - Create game status management and winner determination
     - Write unit tests for all victory scenarios
     - _Requirements: 13.1, 13.2, 13.3, 13.4_
 
-  - [ ] 5.4 Implement undo functionality with state management
+  - [x] 5.4 Implement undo functionality with state management
+
+
+
+
+
     - Add undo_move method with state restoration
     - Implement maximum 3-move undo history management
     - Add undo availability checking and validation
     - Write unit tests for undo functionality and edge cases
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 6. Create Move and MoveResult classes for move tracking
+- [x] 6. Create Move and MoveResult classes for move tracking
+
+
+
+
+
   - Implement Move class for immutable move records with timestamp
   - Create MoveResult class for move operation feedback
   - Add move serialization methods for file operations
