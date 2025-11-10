@@ -102,7 +102,7 @@
     - Write unit tests for state management and restoration
     - _Requirements: 6.1, 6.4_
 
-- [ ] 5. Create core Game class with rule enforcement
+- [x] 5. Create core Game class with rule enforcement
 
 
 
@@ -170,37 +170,60 @@
   - Write unit tests for move tracking and result handling
   - _Requirements: 7.2, 8.2_
 
-- [ ] 7. Implement file management system
-  - [ ] 7.1 Create FileManager class for save/load operations
+- [x] 7. Implement file management system
+
+
+
+
+  - [x] 7.1 Create FileManager class for save/load operations
+
+
     - Implement game state serialization to JSON format for .jungle files
     - Add game state deserialization and validation from .jungle files
     - Create error handling for file operation failures
     - Write unit tests for save/load functionality with various scenarios
     - _Requirements: 9.1, 9.2, 9.3, 10.1, 10.2, 10.3_
 
-  - [ ] 7.2 Implement game record functionality
+  - [x] 7.2 Implement game record functionality
+
+
     - Add move history serialization to text format for .record files
     - Implement record file parsing and move sequence recreation
     - Create record replay functionality with step-by-step playback
     - Write unit tests for record creation and replay functionality
     - _Requirements: 7.1, 7.2, 7.3, 8.1, 8.2, 8.3_
 
-- [ ] 8. Create view components for game display
-  - [ ] 8.1 Implement BoardRenderer for visual board representation
+- [x] 8. Create view components for game display
+  - [x] 8.1 Implement BoardRenderer for visual board representation
+
+
+
+
+
     - Create ASCII art board rendering with piece symbols
     - Add terrain marking display (dens, traps, water areas)
     - Implement piece ownership visualization with colors/symbols
     - Write unit tests for board rendering with various game states
     - _Requirements: 5.1, 5.2, 5.4, 5.5_
 
-  - [ ] 8.2 Create GameView class for complete game state display
+  - [x] 8.2 Create GameView class for complete game state display
+
+
+
+
+
     - Implement comprehensive game status display including current player
     - Add move history display and game information presentation
     - Create formatted output for different game phases
     - Write unit tests for view formatting and display logic
     - _Requirements: 5.1, 5.2, 5.3_
 
-  - [ ] 8.3 Implement MessageDisplay for user communication
+  - [x] 8.3 Implement MessageDisplay for user communication
+
+
+
+
+
     - Create error message formatting and display methods
     - Add informational message and prompt handling
     - Implement user feedback and confirmation displays

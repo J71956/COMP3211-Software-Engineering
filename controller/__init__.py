@@ -1,4 +1,8 @@
 """
 Controller package for Jungle Game.
-Manages user input and coordinates between model and view.
+Handles user interaction and file operations.
 """
+
+from controller.file_manager import FileManager
+
+__all__ = ['FileManager']
