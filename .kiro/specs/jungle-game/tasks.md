@@ -14,6 +14,11 @@
 - [x] 2. Implement base Piece class and piece hierarchy
 
 
+
+
+
+
+
   - [x] 2.1 Create abstract Piece base class with core attributes and methods
 
 
