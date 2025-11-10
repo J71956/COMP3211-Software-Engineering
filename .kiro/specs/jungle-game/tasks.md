@@ -1,34 +1,49 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and core data types
+- [x] 1. Set up project structure and core data types
+
+
+
+
   - Create the main project directory structure with model, view, and controller packages
   - Implement core data types: Position, Direction, TerrainType, PlayerColor, GameStatus enums
   - Create base exception classes for error handling
   - Write unit tests for Position class and basic data types
   - _Requirements: 14.1, 14.3_
 
-- [ ] 2. Implement base Piece class and piece hierarchy
-  - [ ] 2.1 Create abstract Piece base class with core attributes and methods
+- [x] 2. Implement base Piece class and piece hierarchy
+
+
+  - [x] 2.1 Create abstract Piece base class with core attributes and methods
+
+
     - Implement Piece abstract base class with rank, owner, position attributes
     - Define abstract methods: can_move_to, can_capture, get_valid_moves
     - Write unit tests for Piece base class functionality
     - _Requirements: 11.1, 12.1_
 
-  - [ ] 2.2 Implement standard land animal pieces (Cat, Dog, Wolf, Leopard, Elephant)
+
+
+  - [x] 2.2 Implement standard land animal pieces (Cat, Dog, Wolf, Leopard, Elephant)
+
     - Create concrete implementations for Cat, Dog, Wolf, Leopard, Elephant classes
     - Implement standard movement validation (one square horizontally/vertically)
     - Implement rank-based capture logic for standard pieces
     - Write unit tests for each standard piece type
+
     - _Requirements: 11.1, 12.1_
 
-  - [ ] 2.3 Implement Rat piece with special water movement and capture rules
+  - [x] 2.3 Implement Rat piece with special water movement and capture rules
+
     - Create Rat class with water movement capability
     - Implement special capture rules: can capture elephant, water/land interaction restrictions
     - Add logic to prevent rat-to-rat capture across water/land boundaries
     - Write comprehensive unit tests for Rat special behaviors
     - _Requirements: 11.3, 11.4, 12.2, 12.3, 12.5, 12.6_
 
-  - [ ] 2.4 Implement Lion and Tiger pieces with river jumping capability
+  - [x] 2.4 Implement Lion and Tiger pieces with river jumping capability
+
+
     - Create Lion and Tiger classes with river jumping logic
     - Implement jump validation: check for blocking rats in water squares
     - Add capture-by-jumping functionality
