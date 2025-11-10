@@ -55,15 +55,24 @@
     - Write unit tests for river jumping mechanics and edge cases
     - _Requirements: 11.5, 12.1_
 
-- [ ] 3. Create Board class with terrain management
-  - [ ] 3.1 Implement basic Board class with grid and terrain mapping
+- [x] 3. Create Board class with terrain management
+
+
+
+
+
+  - [x] 3.1 Implement basic Board class with grid and terrain mapping
+
+
     - Create 7x9 board grid structure with piece placement capability
     - Implement terrain mapping for dens, traps, and water areas
     - Add position validation and boundary checking methods
     - Write unit tests for board initialization and basic operations
     - _Requirements: 1.1, 5.4_
 
-  - [ ] 3.2 Add terrain query methods and special area detection
+  - [x] 3.2 Add terrain query methods and special area detection
+
+
     - Implement methods to identify dens, traps, and water squares
     - Add player-specific den and trap detection logic
     - Create terrain-based movement validation helpers
