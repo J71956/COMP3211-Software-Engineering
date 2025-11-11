@@ -10,7 +10,14 @@ from model.board import Board
 from model.player import Player
 from model.position import Position
 from model.enums import PlayerColor, GameStatus
-from model.exceptions import GameOverException
+from model.exceptions import (
+    GameOverException,
+    InvalidPositionException,
+    PieceNotFoundException,
+    WrongPlayerException,
+    InvalidMoveException,
+    InvalidCaptureException
+)
 from model.game_state import GameState
 from model.move import Move, MoveResult
 
@@ -235,63 +242,189 @@ class Game:
 
         Raises:
             GameOverException: If attempting to move after game is over
+            InvalidPositionException: If positions are invalid
+            PieceNotFoundException: If no piece at source position
+            WrongPlayerException: If piece doesn't belong to current player
+            InvalidMoveException: If move violates game rules
+            InvalidCaptureException: If capture violates game rules
         """
         # Check if game is over
         if self.is_game_over():
             raise GameOverException("Cannot make moves after game is over")
 
-        # Validate source position
-        if not self._board.is_valid_position(from_pos):
-            return MoveResult(False, f"Invalid source position: {from_pos}")
+        # Validate positions
+        self._validate_positions(from_pos, to_pos)
 
-        # Validate target position
-        if not self._board.is_valid_position(to_pos):
-            return MoveResult(False, f"Invalid target position: {to_pos}")
+        # Get and validate piece
+        piece = self._get_and_validate_piece(from_pos)
 
-        # Get the piece at source position
-        piece = self._board.get_piece(from_pos)
-        if piece is None:
-            return MoveResult(False, f"No piece at position {from_pos}")
+        # Validate move
+        self._validate_move(piece, from_pos, to_pos)
 
-        # Check if piece belongs to current player
-        current_player = self.get_current_player()
-        if piece.owner != current_player:
-            return MoveResult(
-                False,
-                f"Piece at {from_pos} belongs to {piece.owner.name}, "
-                f"not {current_player.name}"
-            )
-
-        # Check if the piece can move to target position
-        if not piece.can_move_to(self._board, to_pos):
-            return MoveResult(
-                False,
-                f"{piece.__class__.__name__} at {from_pos} cannot move to {to_pos}"
-            )
-
-        # Check if there's a piece at target position
+        # Handle capture if target has a piece
         target_piece = self._board.get_piece(to_pos)
         captured_piece = None
 
         if target_piece is not None:
-            # Cannot capture own pieces (should be caught by can_move_to, but double-check)
-            if target_piece.owner == current_player:
-                return MoveResult(False, "Cannot capture your own piece")
-
-            # Check if capture is allowed
-            if not piece.can_capture(target_piece, self._board):
-                return MoveResult(
-                    False,
-                    f"{piece.__class__.__name__} cannot capture "
-                    f"{target_piece.__class__.__name__}"
-                )
-
-            captured_piece = target_piece
+            captured_piece = self._validate_and_execute_capture(piece, target_piece)
 
         # Save current game state for undo functionality
         self._save_game_state()
 
         # Execute the move
+        self._execute_move(piece, from_pos, to_pos, captured_piece)
+
+        # Check for victory conditions before switching turn
+        current_player = self.get_current_player()
+        self._check_victory_conditions(to_pos, current_player)
+
+        # Switch turn (only if game is not over)
+        if not self.is_game_over():
+            self._switch_turn()
+
+        # Build success message
+        message = f"{piece.__class__.__name__} moved from {from_pos} to {to_pos}"
+        if captured_piece is not None:
+            message += f" (captured {captured_piece.__class__.__name__})"
+
+        return MoveResult(True, message, captured_piece)
+
+    def _validate_positions(self, from_pos: Position, to_pos: Position) -> None:
+        """
+        Validate that positions are within board bounds.
+
+        Args:
+            from_pos: Source position
+            to_pos: Target position
+
+        Raises:
+            InvalidPositionException: If either position is invalid
+        """
+        if not self._board.is_valid_position(from_pos):
+            raise InvalidPositionException(
+                f"Source position {from_pos} is out of bounds. "
+                f"Valid range: rows 0-{Board.BOARD_HEIGHT-1}, cols 0-{Board.BOARD_WIDTH-1}"
+            )
+
+        if not self._board.is_valid_position(to_pos):
+            raise InvalidPositionException(
+                f"Target position {to_pos} is out of bounds. "
+                f"Valid range: rows 0-{Board.BOARD_HEIGHT-1}, cols 0-{Board.BOARD_WIDTH-1}"
+            )
+
+        if from_pos == to_pos:
+            raise InvalidMoveException("Source and target positions cannot be the same")
+
+    def _get_and_validate_piece(self, from_pos: Position):
+        """
+        Get piece at position and validate ownership.
+
+        Args:
+            from_pos: Position to get piece from
+
+        Returns:
+            The piece at the position
+
+        Raises:
+            PieceNotFoundException: If no piece at position
+            WrongPlayerException: If piece doesn't belong to current player
+        """
+        piece = self._board.get_piece(from_pos)
+        if piece is None:
+            raise PieceNotFoundException(
+                f"No piece found at position {from_pos}. "
+                f"Please select a position with your piece."
+            )
+
+        current_player = self.get_current_player()
+        if piece.owner != current_player:
+            raise WrongPlayerException(
+                f"Piece at {from_pos} belongs to {piece.owner.name}, "
+                f"not {current_player.name}. It is {current_player.name}'s turn."
+            )
+
+        return piece
+
+    def _validate_move(self, piece, from_pos: Position, to_pos: Position) -> None:
+        """
+        Validate that the piece can move to target position.
+
+        Args:
+            piece: The piece to move
+            from_pos: Source position
+            to_pos: Target position
+
+        Raises:
+            InvalidMoveException: If move violates game rules
+        """
+        if not piece.can_move_to(self._board, to_pos):
+            # Provide more specific error message
+            piece_name = piece.__class__.__name__
+            
+            # Check common reasons for invalid moves
+            if abs(from_pos.row - to_pos.row) + abs(from_pos.col - to_pos.col) != 1:
+                if piece_name not in ['Lion', 'Tiger']:
+                    raise InvalidMoveException(
+                        f"{piece_name} can only move one square horizontally or vertically"
+                    )
+            
+            if self._board.is_water(to_pos) and piece_name != 'Rat':
+                raise InvalidMoveException(
+                    f"{piece_name} cannot move into water. Only Rat can enter water."
+                )
+            
+            if self._board.is_den(to_pos, piece.owner):
+                raise InvalidMoveException(
+                    f"{piece_name} cannot move into its own den"
+                )
+            
+            raise InvalidMoveException(
+                f"{piece_name} at {from_pos} cannot move to {to_pos}"
+            )
+
+    def _validate_and_execute_capture(self, piece, target_piece):
+        """
+        Validate capture and return captured piece.
+
+        Args:
+            piece: The attacking piece
+            target_piece: The piece to capture
+
+        Returns:
+            The captured piece
+
+        Raises:
+            InvalidCaptureException: If capture violates game rules
+        """
+        current_player = self.get_current_player()
+        
+        # Cannot capture own pieces
+        if target_piece.owner == current_player:
+            raise InvalidCaptureException(
+                f"Cannot capture your own {target_piece.__class__.__name__}"
+            )
+
+        # Check if capture is allowed
+        if not piece.can_capture(target_piece, self._board):
+            raise InvalidCaptureException(
+                f"{piece.__class__.__name__} (rank {piece.rank}) cannot capture "
+                f"{target_piece.__class__.__name__} (rank {target_piece.rank})"
+            )
+
+        return target_piece
+
+    def _execute_move(self, piece, from_pos: Position, to_pos: Position, 
+                     captured_piece) -> None:
+        """
+        Execute the actual move on the board.
+
+        Args:
+            piece: The piece to move
+            from_pos: Source position
+            to_pos: Target position
+            captured_piece: Piece being captured, if any
+        """
+        # Move piece on board
         self._board.set_piece(from_pos, None)
         self._board.set_piece(to_pos, piece)
         piece.position = to_pos
@@ -310,20 +443,6 @@ class Game:
             timestamp=datetime.now()
         )
         self._move_history.append(move)
-
-        # Check for victory conditions before switching turn
-        self._check_victory_conditions(to_pos, current_player)
-
-        # Switch turn (only if game is not over)
-        if not self.is_game_over():
-            self._switch_turn()
-
-        # Build success message
-        message = f"{piece.__class__.__name__} moved from {from_pos} to {to_pos}"
-        if captured_piece is not None:
-            message += f" (captured {captured_piece.__class__.__name__})"
-
-        return MoveResult(True, message, captured_piece)
 
     def _save_game_state(self) -> None:
         """

@@ -27,3 +27,28 @@ class GameOverException(JungleGameException):
 class FileOperationException(JungleGameException):
     """Raised when file save/load operations fail."""
     pass
+
+
+class InvalidInputException(JungleGameException):
+    """Raised when user input is invalid or malformed."""
+    pass
+
+
+class PieceNotFoundException(JungleGameException):
+    """Raised when no piece is found at the specified position."""
+    pass
+
+
+class WrongPlayerException(JungleGameException):
+    """Raised when a player tries to move opponent's piece."""
+    pass
+
+
+class InvalidCaptureException(JungleGameException):
+    """Raised when a capture attempt violates game rules."""
+    pass
+
+
+class ValidationException(JungleGameException):
+    """Raised when data validation fails."""
+    pass

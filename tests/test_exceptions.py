@@ -8,7 +8,12 @@ from model.exceptions import (
     InvalidMoveException,
     InvalidPositionException,
     GameOverException,
-    FileOperationException
+    FileOperationException,
+    InvalidInputException,
+    PieceNotFoundException,
+    WrongPlayerException,
+    InvalidCaptureException,
+    ValidationException
 )
 
 
@@ -45,6 +50,36 @@ class TestExceptions(unittest.TestCase):
         self.assertIsInstance(exc, JungleGameException)
         self.assertIsInstance(exc, Exception)
     
+    def test_invalid_input_exception_inheritance(self):
+        """Test InvalidInputException inherits from JungleGameException."""
+        exc = InvalidInputException("Invalid input")
+        self.assertIsInstance(exc, JungleGameException)
+        self.assertIsInstance(exc, Exception)
+    
+    def test_piece_not_found_exception_inheritance(self):
+        """Test PieceNotFoundException inherits from JungleGameException."""
+        exc = PieceNotFoundException("Piece not found")
+        self.assertIsInstance(exc, JungleGameException)
+        self.assertIsInstance(exc, Exception)
+    
+    def test_wrong_player_exception_inheritance(self):
+        """Test WrongPlayerException inherits from JungleGameException."""
+        exc = WrongPlayerException("Wrong player")
+        self.assertIsInstance(exc, JungleGameException)
+        self.assertIsInstance(exc, Exception)
+    
+    def test_invalid_capture_exception_inheritance(self):
+        """Test InvalidCaptureException inherits from JungleGameException."""
+        exc = InvalidCaptureException("Invalid capture")
+        self.assertIsInstance(exc, JungleGameException)
+        self.assertIsInstance(exc, Exception)
+    
+    def test_validation_exception_inheritance(self):
+        """Test ValidationException inherits from JungleGameException."""
+        exc = ValidationException("Validation failed")
+        self.assertIsInstance(exc, JungleGameException)
+        self.assertIsInstance(exc, Exception)
+    
     def test_exception_can_be_raised_and_caught(self):
         """Test that exceptions can be raised and caught."""
         with self.assertRaises(InvalidMoveException):
@@ -52,6 +87,24 @@ class TestExceptions(unittest.TestCase):
         
         with self.assertRaises(JungleGameException):
             raise InvalidPositionException("Test position error")
+    
+    def test_all_exceptions_can_be_caught_as_base(self):
+        """Test that all custom exceptions can be caught as JungleGameException."""
+        exceptions = [
+            InvalidMoveException("test"),
+            InvalidPositionException("test"),
+            GameOverException("test"),
+            FileOperationException("test"),
+            InvalidInputException("test"),
+            PieceNotFoundException("test"),
+            WrongPlayerException("test"),
+            InvalidCaptureException("test"),
+            ValidationException("test")
+        ]
+        
+        for exc in exceptions:
+            with self.assertRaises(JungleGameException):
+                raise exc
 
 
 if __name__ == '__main__':

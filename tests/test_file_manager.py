@@ -439,7 +439,7 @@ class TestFileManagerRecord(unittest.TestCase):
         # Make several moves
         game.make_move(Position(8, 0), Position(7, 0))  # Red Rat
         game.make_move(Position(0, 6), Position(1, 6))  # Blue Rat
-        game.make_move(Position(7, 0), Position(6, 0))  # Red Rat
+        game.make_move(Position(7, 0), Position(8, 0))  # Red Rat (move back)
         game.make_move(Position(1, 6), Position(2, 6))  # Blue Rat
 
         filepath = self.temp_path / "test_game.record"

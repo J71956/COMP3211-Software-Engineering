@@ -11,7 +11,11 @@ from datetime import datetime
 from model.game import Game
 from model.position import Position
 from model.enums import PlayerColor, GameStatus
-from model.exceptions import FileOperationException
+from model.exceptions import FileOperationException, ValidationException
+from utils.logger import get_logger
+
+# Initialize logger for this module
+logger = get_logger(__name__)
 
 
 class FileManager:
@@ -24,6 +28,42 @@ class FileManager:
 
     JUNGLE_VERSION = "1.0"
     RECORD_VERSION = "1.0"
+
+    @staticmethod
+    def validate_filename(filename: str, expected_extension: str) -> Path:
+        """
+        Validate and normalize a filename.
+
+        Args:
+            filename: The filename to validate
+            expected_extension: Expected file extension (e.g., '.jungle')
+
+        Returns:
+            Path object with validated filename
+
+        Raises:
+            ValidationException: If filename is invalid
+        """
+        if not filename or not filename.strip():
+            raise ValidationException(
+                f"Filename cannot be empty. Please provide a valid filename with {expected_extension} extension."
+            )
+
+        filepath = Path(filename.strip())
+
+        # Check for invalid characters
+        invalid_chars = ['<', '>', ':', '"', '|', '?', '*']
+        if any(char in filepath.name for char in invalid_chars):
+            raise ValidationException(
+                f"Filename contains invalid characters. "
+                f"Avoid using: {', '.join(invalid_chars)}"
+            )
+
+        # Ensure correct extension
+        if filepath.suffix != expected_extension:
+            filepath = filepath.with_suffix(expected_extension)
+
+        return filepath
 
     @staticmethod
     def save_game(game: Game, filename: str) -> bool:
@@ -41,10 +81,13 @@ class FileManager:
             FileOperationException: If file operation fails
         """
         try:
+            logger.info(f"Saving game to {filename}")
+            
             # Ensure filename has .jungle extension
             filepath = Path(filename)
             if filepath.suffix != '.jungle':
                 filepath = filepath.with_suffix('.jungle')
+                logger.debug(f"Added .jungle extension: {filepath}")
 
             # Build game state dictionary
             game_data = {
@@ -63,11 +106,15 @@ class FileManager:
                 ],
                 'game_status': game.game_status.value
             }
+            
+            logger.debug(f"Serialized game data: {len(game_data['move_history'])} moves, "
+                        f"{len(game_data['board_state'])} pieces")
 
             # Write to file with backup
             if filepath.exists():
                 backup_path = filepath.with_suffix('.jungle.bak')
                 filepath.rename(backup_path)
+                logger.debug(f"Created backup: {backup_path}")
 
             with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(game_data, f, indent=2)
@@ -76,10 +123,13 @@ class FileManager:
             backup_path = filepath.with_suffix('.jungle.bak')
             if backup_path.exists():
                 backup_path.unlink()
+                logger.debug("Removed backup file")
 
+            logger.info(f"Game saved successfully to {filepath}")
             return True
 
         except Exception as e:
+            logger.error(f"Failed to save game to {filename}: {e}", exc_info=True)
             raise FileOperationException(
                 f"Failed to save game to {filename}: {str(e)}"
             ) from e

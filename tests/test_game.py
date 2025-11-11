@@ -373,51 +373,47 @@ class TestMoveValidation(unittest.TestCase):
         self.game = Game()
 
     def test_move_from_invalid_source_position(self):
-        """Test moving from an invalid position."""
-        result = self.game.make_move(Position(-1, 0), Position(0, 0))
-
-        self.assertFalse(result.success)
-        self.assertIn("Invalid source position", result.message)
+        """Test moving from an invalid position raises InvalidPositionException."""
+        from model.exceptions import InvalidPositionException
+        with self.assertRaises(InvalidPositionException):
+            self.game.make_move(Position(-1, 0), Position(0, 0))
 
     def test_move_to_invalid_target_position(self):
-        """Test moving to an invalid position."""
-        result = self.game.make_move(Position(8, 0), Position(10, 10))
-
-        self.assertFalse(result.success)
-        self.assertIn("Invalid target position", result.message)
+        """Test moving to an invalid position raises InvalidPositionException."""
+        from model.exceptions import InvalidPositionException
+        with self.assertRaises(InvalidPositionException):
+            self.game.make_move(Position(8, 0), Position(10, 10))
 
     def test_move_from_empty_square(self):
-        """Test moving from an empty square."""
-        result = self.game.make_move(Position(4, 3), Position(5, 3))
-
-        self.assertFalse(result.success)
-        self.assertIn("No piece at position", result.message)
+        """Test moving from an empty square raises PieceNotFoundException."""
+        from model.exceptions import PieceNotFoundException
+        with self.assertRaises(PieceNotFoundException):
+            self.game.make_move(Position(4, 3), Position(5, 3))
 
     def test_move_opponent_piece(self):
-        """Test trying to move opponent's piece."""
+        """Test trying to move opponent's piece raises WrongPlayerException."""
+        from model.exceptions import WrongPlayerException
         # Red player tries to move blue piece
-        result = self.game.make_move(Position(0, 0), Position(1, 0))
-
-        self.assertFalse(result.success)
-        self.assertIn("belongs to", result.message)
+        with self.assertRaises(WrongPlayerException):
+            self.game.make_move(Position(0, 0), Position(1, 0))
 
     def test_move_to_own_piece(self):
-        """Test trying to move to a square occupied by own piece."""
-        # Try to move red rat to red leopard's position
-        result = self.game.make_move(Position(8, 0), Position(8, 2))
-
-        self.assertFalse(result.success)
+        """Test trying to move to a square occupied by own piece raises InvalidMoveException."""
+        from model.exceptions import InvalidMoveException
+        # Try to move red rat to red leopard's position (not adjacent, so will fail on distance)
+        with self.assertRaises(InvalidMoveException):
+            self.game.make_move(Position(8, 0), Position(8, 2))
 
     def test_invalid_move_pattern(self):
-        """Test moving with invalid pattern (e.g., diagonal)."""
+        """Test moving with invalid pattern (e.g., diagonal) raises InvalidMoveException."""
+        from model.exceptions import InvalidMoveException
         # Try to move rat diagonally
-        result = self.game.make_move(Position(8, 0), Position(7, 1))
-
-        self.assertFalse(result.success)
-        self.assertIn("cannot move to", result.message)
+        with self.assertRaises(InvalidMoveException):
+            self.game.make_move(Position(8, 0), Position(7, 1))
 
     def test_move_to_own_den(self):
-        """Test that pieces cannot move to their own den."""
+        """Test that pieces cannot move to their own den raises InvalidMoveException."""
+        from model.exceptions import InvalidMoveException
         # Clear path and try to move red piece to red den
         self.game._board.set_piece(Position(7, 3), None)
 
@@ -427,9 +423,8 @@ class TestMoveValidation(unittest.TestCase):
         self.game._board.get_piece(Position(7, 3)).position = Position(7, 3)
         self.game._board.set_piece(Position(8, 4), None)
 
-        result = self.game.make_move(Position(7, 3), Position(8, 3))
-
-        self.assertFalse(result.success)
+        with self.assertRaises(InvalidMoveException):
+            self.game.make_move(Position(7, 3), Position(8, 3))
 
 
 class TestMoveExecution(unittest.TestCase):
@@ -593,11 +588,10 @@ class TestCaptureMechanics(unittest.TestCase):
         self.game._board.set_piece(Position(6, 5), blue_elephant)
         blue_elephant.position = Position(6, 5)
 
-        # Try to capture with cat (rank 2 vs rank 8)
-        result = self.game.make_move(Position(7, 5), Position(6, 5))
-
-        self.assertFalse(result.success)
-        self.assertIn("cannot capture", result.message)
+        # Try to capture with cat (rank 2 vs rank 8) - should raise InvalidCaptureException
+        from model.exceptions import InvalidCaptureException
+        with self.assertRaises(InvalidCaptureException):
+            self.game.make_move(Position(7, 5), Position(6, 5))
 
     def test_move_history_records_capture(self):
         """Test that move history records captured piece."""
@@ -667,9 +661,9 @@ class TestMultipleMoves(unittest.TestCase):
         moves = [
             (Position(8, 0), Position(7, 0)),  # Red rat
             (Position(0, 6), Position(1, 6)),  # Blue rat
-            (Position(7, 0), Position(6, 0)),  # Red rat
+            (Position(7, 0), Position(8, 0)),  # Red rat (move back)
             (Position(1, 6), Position(2, 6)),  # Blue rat
-            (Position(6, 0), Position(5, 0)),  # Red rat
+            (Position(8, 0), Position(7, 0)),  # Red rat (move up again)
         ]
 
         for from_pos, to_pos in moves:
@@ -1025,9 +1019,9 @@ class TestUndoFunctionality(unittest.TestCase):
         moves = [
             (Position(8, 0), Position(7, 0)),  # 1
             (Position(0, 6), Position(1, 6)),  # 2
-            (Position(7, 0), Position(6, 0)),  # 3
+            (Position(7, 0), Position(8, 0)),  # 3 (move back)
             (Position(1, 6), Position(2, 6)),  # 4
-            (Position(6, 0), Position(5, 0)),  # 5
+            (Position(8, 0), Position(7, 0)),  # 5 (move up again)
         ]
 
         for from_pos, to_pos in moves:

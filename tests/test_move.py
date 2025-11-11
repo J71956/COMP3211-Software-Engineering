@@ -256,19 +256,18 @@ class TestMoveSerializationIntegration(unittest.TestCase):
         self.game.make_move(Position(8, 0), Position(7, 0))
         # Move blue cat
         self.game.make_move(Position(1, 1), Position(2, 1))
-        # Move red rat forward
-        self.game.make_move(Position(7, 0), Position(6, 0))
-        # Move blue cat
+        # Move red rat back
+        self.game.make_move(Position(7, 0), Position(8, 0))
+        # Move blue cat down
         self.game.make_move(Position(2, 1), Position(3, 1))
-        # Continue moving pieces to create capture opportunity
-        self.game.make_move(Position(6, 0), Position(5, 0))
+        # Move red rat up
+        self.game.make_move(Position(8, 0), Position(7, 0))
+        # Move blue cat down
         self.game.make_move(Position(3, 1), Position(4, 1))
-        self.game.make_move(Position(5, 0), Position(4, 0))
+        # Move red rat back
+        self.game.make_move(Position(7, 0), Position(8, 0))
+        # Move blue cat down
         self.game.make_move(Position(4, 1), Position(5, 1))
-        self.game.make_move(Position(4, 0), Position(3, 0))
-        self.game.make_move(Position(5, 1), Position(6, 1))
-        self.game.make_move(Position(3, 0), Position(2, 0))
-        self.game.make_move(Position(6, 1), Position(7, 1))
 
         # Check if any captures occurred
         captures = [m for m in self.game.move_history if m.captured_piece is not None]

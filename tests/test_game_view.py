@@ -78,9 +78,9 @@ class TestGameView(unittest.TestCase):
         self.game.board.set_piece(Position(0, 3), None)  # Clear den
         self.game.make_move(Position(8, 0), Position(7, 0))  # Move rat up
         self.game.make_move(Position(0, 6), Position(1, 6))  # Blue moves
-        self.game.make_move(Position(7, 0), Position(6, 0))  # Move rat up
+        self.game.make_move(Position(7, 0), Position(8, 0))  # Move rat back
         self.game.make_move(Position(1, 6), Position(2, 6))  # Blue moves
-        self.game.make_move(Position(6, 0), Position(5, 0))  # Move rat up
+        self.game.make_move(Position(8, 0), Position(7, 0))  # Move rat up again
         self.game.make_move(Position(2, 6), Position(3, 6))  # Blue moves
         self.game.make_move(Position(5, 0), Position(4, 0))  # Move rat up
         self.game.make_move(Position(3, 6), Position(4, 6))  # Blue moves
@@ -187,9 +187,9 @@ class TestGameView(unittest.TestCase):
         self.game.board.set_piece(Position(0, 3), None)  # Clear den
         self.game.make_move(Position(8, 0), Position(7, 0))
         self.game.make_move(Position(0, 6), Position(1, 6))
-        self.game.make_move(Position(7, 0), Position(6, 0))
+        self.game.make_move(Position(7, 0), Position(8, 0))
         self.game.make_move(Position(1, 6), Position(2, 6))
-        self.game.make_move(Position(6, 0), Position(5, 0))
+        self.game.make_move(Position(8, 0), Position(7, 0))
         self.game.make_move(Position(2, 6), Position(3, 6))
         self.game.make_move(Position(5, 0), Position(4, 0))
         self.game.make_move(Position(3, 6), Position(4, 6))
@@ -286,7 +286,7 @@ class TestGameView(unittest.TestCase):
         # Move red rat up and capture
         self.game.make_move(Position(8, 0), Position(7, 0))
         self.game.make_move(Position(0, 0), Position(1, 0))  # Blue elephant
-        self.game.make_move(Position(7, 0), Position(6, 0))
+        self.game.make_move(Position(7, 0), Position(8, 0))
 
         result = self.view.display_game_state(self.game)
 
