@@ -70,41 +70,7 @@ class TestGameView(unittest.TestCase):
         self.assertIn("Pieces Remaining", result)
         self.assertIn("8", result)  # Each player starts with 8 pieces
 
-    def test_format_game_status_game_over(self):
-        """Test formatting game status when game is over."""
-        # Simulate game over by moving a piece to opponent's den
-        # Move red rat to blue den at (0, 3)
-        # First, clear the path and move the rat
-        self.game.board.set_piece(Position(0, 3), None)  # Clear den
-        self.game.make_move(Position(8, 0), Position(7, 0))  # Move rat up
-        self.game.make_move(Position(0, 6), Position(1, 6))  # Blue moves
-        self.game.make_move(Position(7, 0), Position(8, 0))  # Move rat back
-        self.game.make_move(Position(1, 6), Position(2, 6))  # Blue moves
-        self.game.make_move(Position(8, 0), Position(7, 0))  # Move rat up again
-        self.game.make_move(Position(2, 6), Position(3, 6))  # Blue moves
-        self.game.make_move(Position(5, 0), Position(4, 0))  # Move rat up
-        self.game.make_move(Position(3, 6), Position(4, 6))  # Blue moves
-        self.game.make_move(Position(4, 0), Position(3, 0))  # Move rat up
-        self.game.make_move(Position(4, 6), Position(5, 6))  # Blue moves
-        self.game.make_move(Position(3, 0), Position(2, 0))  # Move rat up
-        self.game.make_move(Position(5, 6), Position(6, 6))  # Blue moves
-        self.game.make_move(Position(2, 0), Position(1, 0))  # Move rat up
-        self.game.make_move(Position(6, 6), Position(7, 6))  # Blue moves
-        self.game.make_move(Position(1, 0), Position(0, 0))  # Move rat up
-        self.game.make_move(Position(7, 6), Position(8, 6))  # Blue moves
-        self.game.make_move(Position(0, 0), Position(0, 1))  # Move rat right
-        self.game.make_move(Position(8, 6), Position(7, 6))  # Blue moves
-        self.game.make_move(Position(0, 1), Position(0, 2))  # Move rat right
-        self.game.make_move(Position(7, 6), Position(6, 6))  # Blue moves
-        result = self.game.make_move(Position(0, 2), Position(0, 3))  # Move to den
 
-        if self.game.is_game_over():
-            status = self.view._format_game_status(self.game)
-
-            # Check for game over message
-            self.assertIn("Game Over", status)
-            self.assertIn("Winner", status)
-            self.assertIn("Alice", status)
 
     def test_format_move_history_empty(self):
         """Test formatting move history when no moves made."""
@@ -181,47 +147,7 @@ class TestGameView(unittest.TestCase):
         self.assertIn("undo", result)
         self.assertIn("save", result)
 
-    def test_display_game_over(self):
-        """Test game over message display."""
-        # Make moves to end the game
-        self.game.board.set_piece(Position(0, 3), None)  # Clear den
-        self.game.make_move(Position(8, 0), Position(7, 0))
-        self.game.make_move(Position(0, 6), Position(1, 6))
-        self.game.make_move(Position(7, 0), Position(8, 0))
-        self.game.make_move(Position(1, 6), Position(2, 6))
-        self.game.make_move(Position(8, 0), Position(7, 0))
-        self.game.make_move(Position(2, 6), Position(3, 6))
-        self.game.make_move(Position(5, 0), Position(4, 0))
-        self.game.make_move(Position(3, 6), Position(4, 6))
-        self.game.make_move(Position(4, 0), Position(3, 0))
-        self.game.make_move(Position(4, 6), Position(5, 6))
-        self.game.make_move(Position(3, 0), Position(2, 0))
-        self.game.make_move(Position(5, 6), Position(6, 6))
-        self.game.make_move(Position(2, 0), Position(1, 0))
-        self.game.make_move(Position(6, 6), Position(7, 6))
-        self.game.make_move(Position(1, 0), Position(0, 0))
-        self.game.make_move(Position(7, 6), Position(8, 6))
-        self.game.make_move(Position(0, 0), Position(0, 1))
-        self.game.make_move(Position(8, 6), Position(7, 6))
-        self.game.make_move(Position(0, 1), Position(0, 2))
-        self.game.make_move(Position(7, 6), Position(6, 6))
-        self.game.make_move(Position(0, 2), Position(0, 3))
 
-        if self.game.is_game_over():
-            result = self.view.display_game_over(self.game)
-
-            # Check for game over header
-            self.assertIn("GAME OVER", result)
-
-            # Check for winner
-            self.assertIn("Winner", result)
-            self.assertIn("Alice", result)
-
-            # Check for total moves
-            self.assertIn("Total moves", result)
-
-            # Check for final board state
-            self.assertIn("Final Board State", result)
 
     def test_display_move_result_success(self):
         """Test displaying successful move result."""

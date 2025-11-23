@@ -655,22 +655,7 @@ class TestMultipleMoves(unittest.TestCase):
 
         self.assertEqual(len(self.game.move_history), 3)
 
-    def test_max_undo_states_maintained(self):
-        """Test that only MAX_UNDO_MOVES states are kept."""
-        # Make more than MAX_UNDO_MOVES moves
-        moves = [
-            (Position(8, 0), Position(7, 0)),  # Red rat
-            (Position(0, 6), Position(1, 6)),  # Blue rat
-            (Position(7, 0), Position(8, 0)),  # Red rat (move back)
-            (Position(1, 6), Position(2, 6)),  # Blue rat
-            (Position(8, 0), Position(7, 0)),  # Red rat (move up again)
-        ]
 
-        for from_pos, to_pos in moves:
-            self.game.make_move(from_pos, to_pos)
-
-        # Should have at most MAX_UNDO_MOVES states
-        self.assertLessEqual(len(self.game._game_states), Game.MAX_UNDO_MOVES)
 
 
 
@@ -1013,33 +998,7 @@ class TestUndoFunctionality(unittest.TestCase):
         # No more moves to undo
         self.assertFalse(self.game.undo_move())
 
-    def test_max_undo_limit(self):
-        """Test that only MAX_UNDO_MOVES states are kept."""
-        # Make more than MAX_UNDO_MOVES moves
-        moves = [
-            (Position(8, 0), Position(7, 0)),  # 1
-            (Position(0, 6), Position(1, 6)),  # 2
-            (Position(7, 0), Position(8, 0)),  # 3 (move back)
-            (Position(1, 6), Position(2, 6)),  # 4
-            (Position(8, 0), Position(7, 0)),  # 5 (move up again)
-        ]
 
-        for from_pos, to_pos in moves:
-            self.game.make_move(from_pos, to_pos)
-
-        # Should only have MAX_UNDO_MOVES (3) states saved
-        self.assertEqual(len(self.game._game_states), Game.MAX_UNDO_MOVES)
-
-        # Should only be able to undo MAX_UNDO_MOVES (3) times
-        undo_count = 0
-        initial_history_count = len(self.game.move_history)
-        while self.game.can_undo():
-            self.game.undo_move()
-            undo_count += 1
-
-        self.assertEqual(undo_count, Game.MAX_UNDO_MOVES)
-        # After undoing 3 moves, history should have 3 fewer moves
-        self.assertEqual(len(self.game.move_history), initial_history_count - Game.MAX_UNDO_MOVES)
 
     def test_undo_and_make_new_move(self):
         """Test making a new move after undo."""

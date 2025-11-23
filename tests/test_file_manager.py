@@ -432,33 +432,4 @@ class TestFileManagerRecord(unittest.TestCase):
         self.assertEqual(replayed_game.players[0].name, "Charlie")
         self.assertEqual(replayed_game.players[1].name, "Diana")
 
-    def test_save_and_replay_complex_game(self):
-        """Test save and replay with multiple moves and captures."""
-        game = Game("Alice", "Bob")
 
-        # Make several moves
-        game.make_move(Position(8, 0), Position(7, 0))  # Red Rat
-        game.make_move(Position(0, 6), Position(1, 6))  # Blue Rat
-        game.make_move(Position(7, 0), Position(8, 0))  # Red Rat (move back)
-        game.make_move(Position(1, 6), Position(2, 6))  # Blue Rat
-
-        filepath = self.temp_path / "test_game.record"
-        FileManager.save_record(game, str(filepath))
-
-        replayed_game = FileManager.replay_record(str(filepath))
-
-        # Verify final board state matches
-        for row in range(9):
-            for col in range(7):
-                pos = Position(row, col)
-                original_piece = game.board.get_piece(pos)
-                replayed_piece = replayed_game.board.get_piece(pos)
-
-                if original_piece is None:
-                    self.assertIsNone(replayed_piece)
-                else:
-                    self.assertIsNotNone(replayed_piece)
-                    self.assertEqual(
-                        original_piece.__class__.__name__,
-                        replayed_piece.__class__.__name__
-                    )

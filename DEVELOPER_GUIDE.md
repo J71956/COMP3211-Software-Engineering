@@ -249,16 +249,15 @@ Renders the board as ASCII art.
 
 - Python 3.8 or higher
 - No external dependencies required (uses only Python standard library)
+- Windows recommended
+- IDE:
+- Recommended: Visual Studio Code with the Python extension (by Microsoft)
+- Alternative: PyCharm Community Edition
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd jungle-game
-```
-
-2. Run the game:
+1. Download Zip File and Extract it:
+2. Run the game in root folder:
 ```bash
 python main.py
 ```
@@ -622,32 +621,3 @@ make html
 2. Enable debug logging with `--debug` flag
 3. Review relevant test files for examples
 4. Check docstrings for API documentation
-
-## Contributing
-
-### Development Workflow
-
-1. Create a feature branch
-2. Write tests for new functionality
-3. Implement the feature
-4. Ensure all tests pass
-5. Update documentation
-6. Submit pull request
-
-### Code Review Checklist
-
-- [ ] All tests pass
-- [ ] New code has tests
-- [ ] Docstrings added/updated
-- [ ] Type hints included
-- [ ] Logging added where appropriate
-- [ ] No PEP 8 violations
-- [ ] Documentation updated
-
-## License
-
-[Add license information here]
-
-## Contact
-
-[Add contact information here]

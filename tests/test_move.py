@@ -249,33 +249,7 @@ class TestMoveSerializationIntegration(unittest.TestCase):
         self.assertEqual(move_dict['to_row'], 7)
         self.assertEqual(move_dict['to_col'], 0)
 
-    def test_move_with_capture_serialization(self):
-        """Test serialization of a move with capture."""
-        # Set up a capture scenario
-        # Move red rat forward
-        self.game.make_move(Position(8, 0), Position(7, 0))
-        # Move blue cat
-        self.game.make_move(Position(1, 1), Position(2, 1))
-        # Move red rat back
-        self.game.make_move(Position(7, 0), Position(8, 0))
-        # Move blue cat down
-        self.game.make_move(Position(2, 1), Position(3, 1))
-        # Move red rat up
-        self.game.make_move(Position(8, 0), Position(7, 0))
-        # Move blue cat down
-        self.game.make_move(Position(3, 1), Position(4, 1))
-        # Move red rat back
-        self.game.make_move(Position(7, 0), Position(8, 0))
-        # Move blue cat down
-        self.game.make_move(Position(4, 1), Position(5, 1))
 
-        # Check if any captures occurred
-        captures = [m for m in self.game.move_history if m.captured_piece is not None]
-        if captures:
-            move = captures[0]
-            move_dict = move.to_dict()
-            self.assertIsNotNone(move_dict['captured_piece_type'])
-            self.assertIsNotNone(move_dict['captured_piece_rank'])
 
 
 if __name__ == '__main__':

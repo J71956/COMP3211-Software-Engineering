@@ -1,8 +1,5 @@
-# Documentation Summary - Task 14 Completion
-
+# Documentation Summary 
 ## Overview
-
-This document summarizes the completion of Task 14: "Add final polish and documentation" for the Jungle Game project.
 
 ## Completed Items
 
